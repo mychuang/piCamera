@@ -17,3 +17,7 @@
 - python version: 3.11.9
 
 - opencv version: 4.10.0
+
+## 學習策略
+
+- openCV 圖片操作
