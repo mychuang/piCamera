@@ -21,3 +21,5 @@
 ## 學習策略
 
 - openCV 圖片操作
+
+- openCV webCam 
