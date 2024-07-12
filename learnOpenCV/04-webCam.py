@@ -1,8 +1,16 @@
 import cv2
 import numpy as np
 
-# 開啟預設攝影機 (通常為攝影機0)
-cap = cv2.VideoCapture(0)
+camera_found = False
+for i in range(5):
+    cap = cv2.VideoCapture(i)
+    ret, frame = cap.read()
+    if ret:
+        camera_found = True
+        print(f"使用攝影機 {i}")
+        break
+    cap.release()
+
 print("當前攝影機的影像寬度: " + str(cap.get(cv2.CAP_PROP_FRAME_WIDTH)))
 print("當前攝影機的影像高度: " + str(cap.get(cv2.CAP_PROP_FRAME_HEIGHT)))
 # 設置攝影機影像的寬度為 640
