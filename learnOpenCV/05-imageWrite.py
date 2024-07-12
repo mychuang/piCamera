@@ -33,10 +33,10 @@ else:
     filename = "test.avi"
     fourcc = cv2.VideoWriter_fourcc(*'XVID')
 
-ftp=20.0
+fps=20.0
 width = 640
 height = 480
-out = cv2.VideoWriter(filename, fourcc, ftp, (width, height))
+out = cv2.VideoWriter(filename, fourcc, fps, (width, height))
 
 # 進入無窮迴圈以不斷抓取影像
 while True:
