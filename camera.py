@@ -3,6 +3,21 @@ import numpy as np
 import platform
 from datetime import datetime
 import time
+import glob
+import os
+
+# 支援的影片副檔名
+video_extensions = ['.mp4', '.mov', '.avi']
+
+def delete_oldest_files(extensions):
+    files = []
+    for ext in extensions:
+        files.extend(glob.glob(os.path.join("./", f'*{ext}')))
+
+    if len(files) > 5:
+        files.sort(key=os.path.getmtime)
+        print("刪除檔案： " + files[0])
+        os.remove(files[0])
 
 """
 確認攝影機狀態
@@ -28,16 +43,16 @@ cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
 """
 設置影像匯出格式
 """
-os = platform.system()
-print(f"作業系統： {os}")
-if os == "Linux":
-    formatName = ".mp4"
+os_platform = platform.system()
+print(f"作業系統： {os_platform}")
+if os_platform == "Linux":
+    formatName = video_extensions[0]
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-elif os == "Darwin":
-    formatName = ".mov"
+elif os_platform == "Darwin":
+    formatName = video_extensions[1]
     fourcc = cv2.VideoWriter_fourcc('m', 'p', '4', 'v')
 else:
-    formatName = ".avi"
+    formatName = video_extensions[2]
     fourcc = cv2.VideoWriter_fourcc(*'XVID')
 
 fps = 20.0
@@ -71,13 +86,16 @@ while True:
             filename = dt_string + formatName
             out = cv2.VideoWriter(filename, fourcc, fps, (width, height))
 
-            # 寫入過去30秒的所有幀
+            # 寫入過去10秒的所有幀
             for frame in frames:
                 out.write(frame)
 
             out.release()  # 確保每個文件都能正常寫入和關閉
             print(f"影像已輸出： {filename}")
             print(f"共 {frame_count} 幀")
+
+            # 呼叫函數來管理檔案
+            delete_oldest_files(video_extensions)
 
             # 重置計時器和幀列表
             start_time = current_time
