@@ -18,7 +18,7 @@
 
 - opencv version: 4.10.0
 
-## 學習策略
+## 學習策略 : learnOpenCV
 
 - 相機操作
 
