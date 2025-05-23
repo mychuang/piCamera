@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</head>
+<body>
+    <h1>登入頁面</h1>
+    <form action="/main" method="get">
+        <label>帳號: <input type="text" id="username"></label><br>
+        <label>密碼: <input type="password" id="password"></label><br>
+        <button type="button" onclick="handleLogin()">登入</button>
+    </form>
+</body>
+</html>
