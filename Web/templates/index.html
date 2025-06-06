@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Main Page</title>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <style>
+        img.stream {
+            width: 640px;
+            height: auto;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header" id="demo">
+        <img class="stream" src="{{ videourl }}" alt="video stream">
+    </div>
+</body>
+</html>

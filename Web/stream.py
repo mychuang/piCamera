@@ -7,6 +7,8 @@ import time
 import glob
 import os
 import threading
+from PIL import Image
+from io import BytesIO
 
 CONFIG = {
     "fps": 20.0,
@@ -18,6 +20,26 @@ CONFIG = {
 }
 
 video_extensions = ['.mp4', '.mov', '.avi']
+
+latest_frame = None  
+
+def get_latest_frame_bytes(resize_factor=0.5, quality=30):
+    global latest_frame
+    if latest_frame is None:
+        return None
+
+    # 轉成 PIL 處理
+    img = cv2.cvtColor(latest_frame, cv2.COLOR_BGR2RGB)
+    img = Image.fromarray(img)
+
+    # 縮小圖片
+    w, h = img.size
+    img.thumbnail((int(w * resize_factor), int(h * resize_factor)))
+
+    # 存為 JPEG Bytes
+    bytes_io = BytesIO()
+    img.save(bytes_io, 'jpeg', quality=quality)
+    return bytes_io.getvalue()
 
 def delete_oldest_files(extensions):
     files = []
@@ -67,6 +89,9 @@ def run_camera_loop():
         ret, frame = cap.read()
         if not ret:
             continue
+
+        global latest_frame
+        latest_frame = frame.copy()  # ← 即時更新
 
         dt_string = datetime.now().strftime("%Y%m%d%H%M%S")
         cv2.putText(frame, f'Time: {dt_string}', (10, 30),

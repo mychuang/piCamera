@@ -1,24 +1,33 @@
-from flask import Flask
-from flask import url_for
-from flask import redirect
-from flask import render_template
-from flask import request
-import stream
+from flask import Flask, render_template, Response, url_for
+import cv2
 
 app = Flask(__name__)
 
 @app.route('/')
-def home():
-    return redirect(url_for('login'))
+def index():
+    return render_template('index.html', videourl=url_for('video_feed'))
 
-@app.route('/login')
-def login():
-    return render_template('login.html')
+@app.route('/video_feed')
+def video_feed():
+    return Response(gen(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
-@app.route('/main')
-def main():
-    return render_template('main.html')
+def gen():
+    cap = cv2.VideoCapture(0)
+    cap.set(3, 600)
+    cap.set(4, 480)
+    cap.set(5, 40)
+
+    while True:
+        ret, img = cap.read()
+        if not ret:
+            break
+        ret, jpeg = cv2.imencode('.jpg', img)
+        if not ret:
+            continue
+        yield (b'--frame\r\n'
+               b'Content-Type: image/jpeg\r\n\r\n' + jpeg.tobytes() + b'\r\n')
+
+    cap.release()
 
 if __name__ == '__main__':
-    stream.run_in_background()  # 開始背景錄影
     app.run(host='0.0.0.0', port=5000, debug=True)
