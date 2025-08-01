@@ -1,12 +1,32 @@
-from flask import Flask, render_template, Response, url_for 
+from flask import Flask, render_template, request, redirect, url_for, Response
 from stream import run_camera_loop
+
+# 模擬帳密（正式上線建議使用資料庫 + 加密）
+USERNAME = 'admin'
+PASSWORD = '1234'
 
 # 初始化 Flask 應用程式。__name__ 參數表示目前模組的名稱。
 app = Flask(__name__)
 
-@app.route('/') 
-def index():
-    # videourl 變數會傳遞給模板，它的值是 /video_feed 路由的 URL，這樣網頁上的 img 標籤就可以指向這個串流。
+@app.route('/')
+def root():
+    return redirect(url_for('login'))
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+
+        if username == USERNAME and password == PASSWORD:
+            return redirect(url_for('main'))
+        else:
+            return render_template('login.html', error='帳號或密碼錯誤')
+
+    return render_template('login.html')
+
+@app.route('/main')
+def main():
     return render_template('index.html', videourl=url_for('video_feed'))
 
 @app.route('/video_feed')
