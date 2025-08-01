@@ -7,6 +7,7 @@ import time
 import glob
 import os
 import threading
+from utils import init_face_mesh, detect_face_landmarks, draw_face_landmarks
 
 video_extensions = ['.mp4', '.mov', '.avi']
 
@@ -44,9 +45,10 @@ def get_video_format():
     elif os_platform == "Darwin":
         return video_extensions[1], cv2.VideoWriter_fourcc('m', 'p', '4', 'v')
     else:
-        return video_extensions[2], cv2.VideoWriter_fourcc(*'XVID')
+        return video_extensions[2], cv2.VideoWriter_fourcc(*'MJPG')
 
 def run_camera_loop():
+    face_mesh = init_face_mesh()
     cap = detect_camera()
     if not cap:
         print("無法找到可用的攝影機。")
@@ -67,7 +69,6 @@ def run_camera_loop():
         ret, frame = cap.read()
 
         if not ret:
-            # 如果讀取失敗，嘗試重新打開攝影機 (可選，但有助於恢復)
             print("無法讀取影像幀，嘗試重新連接攝影機...")
             cap.release()
             cap = detect_camera()
@@ -82,12 +83,15 @@ def run_camera_loop():
         dt_string = datetime.now().strftime("%Y%m%d%H%M%S")
         cv2.putText(frame, f'Time: {dt_string}', (10, 30),
                         cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
+        
+        results = detect_face_landmarks(face_mesh, frame)
+        draw_face_landmarks(frame, results)
 
-        # 這一步是關鍵：將當前 frame 編碼為 JPEG
+        # 將當前 frame 編碼為 JPEG
         ret_jpeg, jpeg = cv2.imencode('.jpg', frame)
         if not ret_jpeg:
-            print("無法將影像編碼為 JPEG，跳過此幀。")
-            continue # 如果編碼失敗，則跳過當前幀，繼續處理下一幀。
+            print("無法將影像編碼為 JPEG, 跳過此幀。")
+            continue 
 
         frames.append(frame.copy())
         frame_count += 1
@@ -119,6 +123,7 @@ def run_camera_loop():
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + jpeg.tobytes() + b'\r\n')
 
+    face_mesh.close()
     cap.release()
 
 def run_in_background():
