@@ -7,39 +7,16 @@ import time
 import glob
 import os
 import threading
-from PIL import Image
-from io import BytesIO
-
-CONFIG = {
-    "fps": 20.0,
-    "width": 640,
-    "height": 480,
-    "interval_sec": 10,
-    "max_files": 5,
-    "show_preview": False
-}
 
 video_extensions = ['.mp4', '.mov', '.avi']
 
-latest_frame = None  
-
-def get_latest_frame_bytes(resize_factor=0.5, quality=30):
-    global latest_frame
-    if latest_frame is None:
-        return None
-
-    # 轉成 PIL 處理
-    img = cv2.cvtColor(latest_frame, cv2.COLOR_BGR2RGB)
-    img = Image.fromarray(img)
-
-    # 縮小圖片
-    w, h = img.size
-    img.thumbnail((int(w * resize_factor), int(h * resize_factor)))
-
-    # 存為 JPEG Bytes
-    bytes_io = BytesIO()
-    img.save(bytes_io, 'jpeg', quality=quality)
-    return bytes_io.getvalue()
+CONFIG = {
+    "fps": 40.0,
+    "width": 600,
+    "height": 480,
+    "max_files": 5,
+    "interval_sec": 10
+}
 
 def delete_oldest_files(extensions):
     files = []
@@ -77,6 +54,7 @@ def run_camera_loop():
 
     cap.set(cv2.CAP_PROP_FRAME_WIDTH, CONFIG["width"])
     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, CONFIG["height"])
+    cap.set(cv2.CAP_PROP_FPS, CONFIG["fps"])
 
     formatName, fourcc = get_video_format()
     start_time = time.time()
@@ -87,18 +65,29 @@ def run_camera_loop():
         current_time = time.time()
         elapsed_time = current_time - start_time
         ret, frame = cap.read()
-        if not ret:
-            continue
 
-        global latest_frame
-        latest_frame = frame.copy()  # ← 即時更新
+        if not ret:
+            # 如果讀取失敗，嘗試重新打開攝影機 (可選，但有助於恢復)
+            print("無法讀取影像幀，嘗試重新連接攝影機...")
+            cap.release()
+            cap = detect_camera()
+            if not cap:
+                print("重新連接攝影機失敗，停止串流。")
+                break
+            cap.set(cv2.CAP_PROP_FRAME_WIDTH, CONFIG["width"])
+            cap.set(cv2.CAP_PROP_FRAME_HEIGHT, CONFIG["height"])
+            cap.set(cv2.CAP_PROP_FPS, CONFIG["fps"])
+            continue
 
         dt_string = datetime.now().strftime("%Y%m%d%H%M%S")
         cv2.putText(frame, f'Time: {dt_string}', (10, 30),
-                    cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
+                        cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
 
-        if CONFIG["show_preview"]:
-            cv2.imshow('frame', frame)
+        # 這一步是關鍵：將當前 frame 編碼為 JPEG
+        ret_jpeg, jpeg = cv2.imencode('.jpg', frame)
+        if not ret_jpeg:
+            print("無法將影像編碼為 JPEG，跳過此幀。")
+            continue # 如果編碼失敗，則跳過當前幀，繼續處理下一幀。
 
         frames.append(frame.copy())
         frame_count += 1
@@ -120,15 +109,17 @@ def run_camera_loop():
                 print(f"✅ 影像已輸出：{filename}")
                 print(f"🎞️ 共 {frame_count} 幀")
                 delete_oldest_files(video_extensions)
+            else:
+                print(f"❌ 錯誤: 無法打開 {filename} 進行寫入。請檢查編碼器或檔案路徑。")
             start_time = current_time
             frames = []
             frame_count = 0
 
-        if CONFIG["show_preview"] and cv2.waitKey(1) == 27:
-            break
+        # 使用 yield 返回 JPEG 格式的字節串
+        yield (b'--frame\r\n'
+               b'Content-Type: image/jpeg\r\n\r\n' + jpeg.tobytes() + b'\r\n')
 
     cap.release()
-    cv2.destroyAllWindows()
 
 def run_in_background():
     thread = threading.Thread(target=run_camera_loop, daemon=True)
