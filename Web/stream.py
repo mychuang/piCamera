@@ -12,8 +12,8 @@ from utils import init_face_mesh, detect_face_landmarks, draw_face_landmarks
 video_extensions = ['.mp4', '.mov', '.avi']
 
 CONFIG = {
-    "fps": 40.0,
-    "width": 600,
+    "fps": 20.0,
+    "width": 640,
     "height": 480,
     "max_files": 5,
     "interval_sec": 10
@@ -40,12 +40,13 @@ def detect_camera():
 
 def get_video_format():
     os_platform = platform.system()
+    print(f"作業系統： {os_platform}")
     if os_platform == "Linux":
         return video_extensions[0], cv2.VideoWriter_fourcc(*'mp4v')
     elif os_platform == "Darwin":
         return video_extensions[1], cv2.VideoWriter_fourcc('m', 'p', '4', 'v')
     else:
-        return video_extensions[2], cv2.VideoWriter_fourcc(*'MJPG')
+        return video_extensions[2], cv2.VideoWriter_fourcc(*'XVID')
 
 def run_camera_loop():
     face_mesh = init_face_mesh()
@@ -75,9 +76,9 @@ def run_camera_loop():
             if not cap:
                 print("重新連接攝影機失敗，停止串流。")
                 break
-            cap.set(cv2.CAP_PROP_FRAME_WIDTH, CONFIG["width"])
-            cap.set(cv2.CAP_PROP_FRAME_HEIGHT, CONFIG["height"])
-            cap.set(cv2.CAP_PROP_FPS, CONFIG["fps"])
+            #cap.set(cv2.CAP_PROP_FRAME_WIDTH, CONFIG["width"])
+            #cap.set(cv2.CAP_PROP_FRAME_HEIGHT, CONFIG["height"])
+            #cap.set(cv2.CAP_PROP_FPS, CONFIG["fps"])
             continue
 
         dt_string = datetime.now().strftime("%Y%m%d%H%M%S")
@@ -104,6 +105,7 @@ def run_camera_loop():
             continue
 
         if elapsed_time >= CONFIG["interval_sec"]:
+            print("正在輸出影像")
             filename = f"{dt_string}_{CONFIG['interval_sec']}s{formatName}"
             out = cv2.VideoWriter(filename, fourcc, CONFIG["fps"], (CONFIG["width"], CONFIG["height"]))
             if out.isOpened():
