@@ -2,20 +2,50 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Main Page</title>
+    <title>Live Camera Stream</title>
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
     <style>
+        /* 全局樣式 */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e0f7fa, #80deea);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        /* 標題樣式 */
+        h1 {
+            color: #00796b;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+            margin-bottom: 20px;
+        }
+
+        /* 攝影機畫面樣式 */
         img.stream {
-            width: 640px;
+            width: 720px;
+            max-width: 90vw;
             height: auto;
-            border: 2px solid #ccc;
-            border-radius: 8px;
+            border: 4px solid #4db6ac;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        img.stream:hover {
+            transform: scale(1.02);
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.3);
         }
     </style>
 </head>
 <body>
+    <h1>即時攝影機畫面</h1>
     <div class="header" id="demo">
-        <img class="stream" src="{{ videourl }}" alt="video stream">
+        <img class="stream" src="{{ videourl }}" alt="Video Stream">
     </div>
 </body>
 </html>
