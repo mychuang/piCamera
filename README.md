@@ -22,6 +22,16 @@
 
 - opencv version: 4.10.0
 
+## raspberry
+- 建立虛擬環境
+python3 -m venv venv
+
+- 啟用虛擬環境
+source venv/bin/activate  # Linux/macOS
+
+- 安裝套件
+pip install "opencv-python<4.10" "numpy<2.0.0" mediapipe --force-reinstall
+
 ## 學習策略 : learnOpenCV
 
 - 相機操作
