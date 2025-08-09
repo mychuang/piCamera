@@ -32,6 +32,8 @@ source venv/bin/activate  # Linux/macOS
 - 安裝套件
 pip install "opencv-python<4.10" "numpy<2.0.0" mediapipe --force-reinstall
 
+- deactivate
+
 ## 學習策略 : learnOpenCV
 
 - 相機操作
