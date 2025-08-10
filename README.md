@@ -24,15 +24,27 @@
 
 ## raspberry
 - 建立虛擬環境
-python3 -m venv venv
+    ````sh
+    python3 -m venv venv
+    ````
 
 - 啟用虛擬環境
-source venv/bin/activate  # Linux/macOS
+    ````sh
+    source venv/bin/activate  # Linux/macOS
+    ````
 
 - 安裝套件
-pip install "opencv-python<4.10" "numpy<2.0.0" mediapipe --force-reinstall
+    ````sh
+    pip install "opencv-python<4.10" "numpy<2.0.0" mediapipe --force-reinstall
+    ````
 
 - deactivate
+
+- insall tailscale in raspberry 4
+    ````sh
+    curl -fsSL https://tailscale.com/install.sh | sh
+    sudo tailscale up
+    ````
 
 ## 學習策略 : learnOpenCV
 
