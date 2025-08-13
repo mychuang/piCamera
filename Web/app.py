@@ -32,7 +32,12 @@ def login():
 def main():
     if not session.get('logged_in'):
         return redirect(url_for('login'))
-    return render_template('index.html', videourl=url_for('video_feed'))
+    
+    default_mode = 1
+    return render_template(
+        'index.html',
+        videourl=url_for('video_feed') + f"?mode={default_mode}"
+    )
 
 @app.route('/video_feed')
 def video_feed():
@@ -41,7 +46,17 @@ def video_feed():
     # boundary=frame 定義了每個影像幀之間的分隔符，這是 MJPEG 串流的標準。
     if not session.get('logged_in'):
         return redirect(url_for('login'))
-    return Response(run_camera_loop(StreamMode.NORMAL), mimetype='multipart/x-mixed-replace; boundary=frame')
+    
+    mode_param = request.args.get("mode", "1")
+    try:
+        mode_enum = StreamMode(int(mode_param))
+    except ValueError:
+        mode_enum = StreamMode.NORMAL
+
+    return Response(
+        run_camera_loop(mode_enum),
+        mimetype='multipart/x-mixed-replace; boundary=frame'
+    )
 
 @app.route('/logout')
 def logout():

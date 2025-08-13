@@ -22,5 +22,10 @@ function handleLogin() {
     console.log("✅ 驗證成功，前往主畫面");
     setTimeout(() => {
         window.location.href = "/main";
-    }, 1000); 
+    }, 1000);
+}
+
+function switchMode(mode) {
+    const img = document.querySelector('.stream');
+    img.src = `/video_feed?mode=${mode}&_=${Date.now()}`;
 }

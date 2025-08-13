@@ -40,12 +40,37 @@
             transform: scale(1.02);
             box-shadow: 0 6px 25px rgba(0, 0, 0, 0.3);
         }
+
+        .mode-buttons {
+            margin-top: 15px;
+        }
+
+        .mode-buttons button {
+            background: #4db6ac;
+            border: none;
+            color: white;
+            padding: 10px 15px;
+            margin: 0 5px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s ease;
+        }
+
+        .mode-buttons button:hover {
+            background: #00796b;
+        }
     </style>
 </head>
 <body>
     <h1>即時攝影機畫面</h1>
     <div class="header" id="demo">
         <img class="stream" src="{{ videourl }}" alt="Video Stream">
+    </div>
+
+    <div class="mode-buttons">
+        <button onclick="switchMode(1)">模式 1 - 正常錄影</button>
+        <button onclick="switchMode(2)">模式 2 - 口鼻偵測</button>
     </div>
     <a href="{{ url_for('logout') }}" style="position: absolute; top: 20px; right: 20px; color: #fff; background: #f44336; padding: 10px 15px; border-radius: 5px; text-decoration: none;">登出</a>
 </body>
