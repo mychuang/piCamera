@@ -32,3 +32,20 @@ def draw_face_landmarks(frame, results):
                 landmark_drawing_spec=drawing_spec,
                 connection_drawing_spec=drawing_spec
             )
+
+MOUTH_NOSE_LANDMARKS = [1, 13, 14, 98, 327]
+
+def is_mouth_nose_visible(results, required_ratio=0.6):
+    """
+    判斷口鼻是否可見
+    """
+    if not results.multi_face_landmarks:
+        return False
+
+    face_landmarks = results.multi_face_landmarks[0]
+    visible_count = sum(
+        1 for idx in MOUTH_NOSE_LANDMARKS
+        if 0 <= face_landmarks.landmark[idx].x <= 1 and 0 <= face_landmarks.landmark[idx].y <= 1
+    )
+
+    return (visible_count / len(MOUTH_NOSE_LANDMARKS)) >= required_ratio
