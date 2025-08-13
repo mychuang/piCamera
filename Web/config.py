@@ -1,4 +1,10 @@
-# config.py
+from enum import Enum
+
+class StreamMode(Enum):
+    NORMAL = 1
+    MOUTH_NOSE_DETECTION = 2
+    YOLO = 3  # 預留未來擴充
+    
 video_extensions = ['.mp4', '.mov', '.avi']
 
 CONFIG = {

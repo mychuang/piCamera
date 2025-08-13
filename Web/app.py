@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, Response, session
 from stream import run_camera_loop
+from config import StreamMode
 
 # 模擬帳密（正式上線建議使用資料庫 + 加密）
 USERNAME = 'admin'
@@ -40,7 +41,7 @@ def video_feed():
     # boundary=frame 定義了每個影像幀之間的分隔符，這是 MJPEG 串流的標準。
     if not session.get('logged_in'):
         return redirect(url_for('login'))
-    return Response(run_camera_loop(), mimetype='multipart/x-mixed-replace; boundary=frame')
+    return Response(run_camera_loop(StreamMode.NORMAL), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 @app.route('/logout')
 def logout():
