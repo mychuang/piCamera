@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Live Camera Stream</title>
@@ -62,6 +63,7 @@
         }
     </style>
 </head>
+
 <body>
     <h1>即時攝影機畫面</h1>
     <div class="header" id="demo">
@@ -69,9 +71,12 @@
     </div>
 
     <div class="mode-buttons">
-        <button onclick="switchMode(1)">模式 1 - 正常錄影</button>
-        <button onclick="switchMode(2)">模式 2 - 口鼻偵測</button>
+        <button id="mode-1" onclick="switchMode(1)">模式 1 - 正常錄影</button>
+        <button id="mode-2" onclick="switchMode(2)">模式 2 - 口鼻偵測</button>
     </div>
-    <a href="{{ url_for('logout') }}" style="position: absolute; top: 20px; right: 20px; color: #fff; background: #f44336; padding: 10px 15px; border-radius: 5px; text-decoration: none;">登出</a>
+
+    <a href="{{ url_for('logout') }}"
+        style="position: absolute; top: 20px; right: 20px; color: #fff; background: #f44336; padding: 10px 15px; border-radius: 5px; text-decoration: none;">登出</a>
 </body>
+
 </html>

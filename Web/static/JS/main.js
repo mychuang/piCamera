@@ -25,7 +25,31 @@ function handleLogin() {
     }, 1000);
 }
 
+let currentMode = 1; // 預設模式 1
+
+function updateButtonStates() {
+    document.querySelectorAll('.mode-buttons button').forEach(btn => {
+        btn.disabled = false;
+        btn.style.background = '#4db6ac';
+        btn.style.cursor = 'pointer';
+    });
+
+    const activeBtn = document.getElementById(`mode-${currentMode}`);
+    if (activeBtn) {
+        activeBtn.disabled = true;
+        activeBtn.style.background = 'gray';
+        activeBtn.style.cursor = 'not-allowed';
+    }
+}
+
 function switchMode(mode) {
+    if (mode === currentMode) return; // 避免重複切換
+    currentMode = mode;
+
     const img = document.querySelector('.stream');
     img.src = `/video_feed?mode=${mode}&_=${Date.now()}`;
+
+    updateButtonStates();
 }
+
+window.onload = updateButtonStates;
