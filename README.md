@@ -48,3 +48,19 @@ insall tailscale in raspberry 4
 curl -fsSL https://tailscale.com/install.sh | sh
 sudo tailscale up
 ````
+
+## 專案開發規劃
+
+- 9月
+  - 解決多人連線問題
+  - 建立最小測試集
+  - 正式部屬樹梅派系統
+
+- 10月
+  - 建立資料庫與登入系統
+
+- TO DO:
+  - 嬰兒臉部其他模組survey
+  - 用照片調整辨識敏感度
+  - 安裝yolo
+  - mail service or line bot
