@@ -1,53 +1,50 @@
-# piCamera
+# 樹梅派多工監控網站 
 
-本專案預期搭建樹莓派網路視訊串流系統，分四階段進行
+## 專案概述
+本專案以 **樹莓派 (Raspberry Pi)** 為基礎，整合影像辨識與網頁展示功能，達成多工監控目標。  
 
-一、python opencv 開啟相機影像
+功能模組：  
+1. **嬰兒臉部辨識**：整合 [Mediapipe](https://github.com/google/mediapipe)  
+2. **人物監測**：整合 [YOLO](https://github.com/ultralytics/yolov5) (待處理)  
+3. **網路流量控管**：整合 [Pi-hole](https://pi-hole.net/) (待處理)  
 
-二、python flask 網站後台建置
+---
 
-三、前端搭建與影像串流顯示
+## 系統架構與技術棧
+專案將分為三大核心模組，並結合後端常駐服務：  
 
-四、DNS與路由設置
+1. **前端**：`HTML`、`CSS`、`JavaScript`  
+2. **後端**：`Flask`、`OpenCV`、`YOLO`、`Mediapipe`  
+3. **常駐運行模組**：`Pi-hole`  
 
-## Web
+---
 
-- 前後端影像串流雛形
+## 建構步驟
 
-## 環境配置
+### 1. 建立虛擬環境並啟用 (Windows)
+windows如下
+```sh
+python -m venv venv
+venv\Scripts\activate
+```
+樹梅派如下
+```sh
+python3 -m venv venv
+source venv/bin/activate  # Linux/macOS
+```
 
-- 樹莓派4, OS release 2024-3-15
+### 2. 安裝相關套件
 
-- python version: 3.11.9
+```sh
+pip install flask pytest
 
-- opencv version: 4.10.0
+pip install "opencv-python<4.10" "numpy<2.0.0" mediapipe --force-reinstall
+````
 
-## raspberry
-- 建立虛擬環境
-    ````sh
-    python3 -m venv venv
-    ````
+### 3. 樹梅派之vpn 
 
-- 啟用虛擬環境
-    ````sh
-    source venv/bin/activate  # Linux/macOS
-    ````
-
-- 安裝套件
-    ````sh
-    pip install "opencv-python<4.10" "numpy<2.0.0" mediapipe --force-reinstall
-    ````
-
-- deactivate
-
-- insall tailscale in raspberry 4
-    ````sh
-    curl -fsSL https://tailscale.com/install.sh | sh
-    sudo tailscale up
-    ````
-
-## 學習策略 : learnOpenCV
-
-- 相機操作
-
-- 圖像繪製
+insall tailscale in raspberry 4
+````sh
+curl -fsSL https://tailscale.com/install.sh | sh
+sudo tailscale up
+````
